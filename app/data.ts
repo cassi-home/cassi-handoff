@@ -8,6 +8,7 @@ export interface SubIssue {
   platform: string;     // "Desktop/iPad" | "Mobile Admin" | "Mobile PM" | "Mobile" | etc
   status: "Backlog" | "Todo" | "In Progress" | "Done" | "Cancelled";
   url: string;          // Linear link
+  prototypeUrl?: string;       // link to interactive prototype (ux-homeos.vercel.app/proto/[slug])
   prd?: string;                // what this feature is and how it works — no ambiguity
   successCriteria?: string[];  // verifiable acceptance criteria for eng
   children?: { id: string; title: string; label: string }[]; // page states / features
@@ -123,6 +124,7 @@ export const PROJECTS: Project[] = [
     },
     issues: [
       { id: "UX-208", title: "Schedule", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-208",
+        prototypeUrl: `${PROTO_BASE}`,
         prd: "Calendar as the primary interface. Month, week, and day views showing all tasks, routines, and events across all properties. Color-coded by source: Team (lilac), Vendor (amber), Me (teal), Unassigned (gray). Filtering by source and property. Clicking empty slot opens task creation pre-filled with date/time. Clicking item opens detail slide panel. Overdue items visually distinct. Operational rail alongside calendar shows Cassi suggestions, team status, tasks, and routines in tabs.",
         successCriteria: [
           "Month/week/day views render all tasks, routines, and events",
@@ -148,6 +150,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-236", title: "Dashboard Notifications", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-236",
+        prototypeUrl: `${PROTO_BASE}/proto/dashboard-notifications`,
         prd: "Notification feed showing items that need PM attention: overdue tasks, vendor confirmations pending, QA reviews waiting, routine instances missed, homeowner messages. Grouped by urgency. Each notification is actionable — click to go to the relevant item. Clearable individually or in bulk. Badge count on nav when unread notifications exist.",
         successCriteria: [
           "Notifications grouped by urgency (urgent/today/this week)",
@@ -160,6 +163,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-237", title: "Dashboard Notifications", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-237",
+        prototypeUrl: `${PROTO_BASE}/proto/dashboard-notifications`,
         prd: "Mobile notification feed. Same content as desktop but optimized for touch. Push notification integration for urgent items. Tap to navigate to source item.",
         successCriteria: [
           "Push notifications for urgent items",
@@ -188,6 +192,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-230", title: "Team Dispatch", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-230",
+        prototypeUrl: `${PROTO_BASE}/proto/team-dispatch`,
         prd: "Visual dispatch board showing each team member's daily schedule as a Gantt-style row. Shows: who is going where, at what time, for what task/routine. Unscheduled tasks in a sidebar queue for drag-and-drop assignment. Cassi surfaces scheduling efficiency suggestions (bundle visits at same property, optimize routing). Shows current location/property per team member.",
         successCriteria: [
           "Each team member shown as a row with time blocks for their tasks/routines",
@@ -200,6 +205,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-233", title: "Team Dispatch", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-233",
+        prototypeUrl: `${PROTO_BASE}/proto/team-dispatch`,
         prd: "Mobile dispatch view. Simplified list of team members with today's assignments. Tap team member to see their full day schedule. Admin can reassign tasks from this view.",
         successCriteria: [
           "List of team members with today's task count",
@@ -637,6 +643,7 @@ export const PROJECTS: Project[] = [
     },
     issues: [
       { id: "UX-95", title: "Task Creation", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-95",
+        prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
         prd: "Task creation flow on desktop/iPad. Accessible from: calendar (click empty slot, date/time pre-filled), dashboard (+ button), property profile (property pre-filled), Cassi Chat (fields pre-filled from conversation). Fields: title (required), property (required), description, assignee (team member or vendor), date/time or flexible (no fixed date), estimated duration, priority (Low/Medium/High/Urgent), rules (require photos, require notes, require invoice, require admin approval), linked asset, recurrence (none, daily, weekly, biweekly, monthly, custom). Task starts in Open status on creation. Cassi insights appear inline during creation (see UX-299). Save creates the task and returns to source context.",
         successCriteria: [
           "Task creation accessible from calendar, dashboard, property profile, and Cassi Chat",
@@ -653,6 +660,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-106", title: "Task Creation", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-106",
+        prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
         prd: "Mobile task creation. Same fields as desktop but optimized for mobile input. Accessible from: calendar (tap empty slot or FAB), dashboard FAB, property profile. Quick-create mode: title + property only, everything else optional. Full-create mode: all fields available. Camera shortcut for attaching a photo during creation. Location-aware: if PM is at a property, that property is pre-selected.",
         successCriteria: [
           "Quick-create: title + property, task created in under 15 seconds",
@@ -665,6 +673,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-117", title: "Task Card", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-117",
+        prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
         prd: "Task detail card on desktop/iPad — the full lifecycle view of a single task. Opens as a slide panel over the calendar. Status flow: Open → In Progress → Ready for QA → Completed. Status can also be set to Cancelled at any point. Rules enforcement: if 'require photos' is on, task cannot move to Ready for QA without at least one photo attached. Same for notes, invoice. If 'require admin approval' is on, Ready for QA requires Admin to approve or reject (reject sends back to In Progress with feedback). Task card sections: header (title, status, priority, property, assignee, dates), description, field notes (added by assignee during work), photos (captured during work), invoice attachment, linked asset with service history, property notes (pulled from property profile for assignee reference), activity log (status changes, notes, timestamps). Edit: Admin can edit all fields. PM/assignee can add notes and photos, change status per rules.",
         successCriteria: [
           "Status flow: Open → In Progress → Ready for QA → Completed",
@@ -682,6 +691,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-124", title: "Task Card", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-124",
+        prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
         prd: "Mobile task card — optimized for field tech execution. Full-screen view of a single task. Same status flow and rules enforcement as desktop. Camera integration for photo capture (opens camera directly, not file picker). Quick status change button prominent at bottom. Field notes entry with keyboard and voice input. Invoice photo capture (snap a paper invoice). Property notes and access codes visible for field reference. Designed for one-handed use where possible.",
         successCriteria: [
           "Status flow: Open → In Progress → Ready for QA → Completed",
@@ -695,6 +705,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-85", title: "Task/Routine List — All", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-85",
+        prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
         prd: "Master list of all tasks and routines across the organization on desktop/iPad. Filterable by: status (Open, In Progress, Ready for QA, Completed, Cancelled), type (Task/Routine), property, assignee, priority, date range. Sortable by: date, priority, status, property. Each row shows: title, property, assignee, status badge, priority, due date. Click row to open task/routine detail. Bulk actions: reassign, change priority, cancel. Pagination or infinite scroll for large lists. Tab toggle between Tasks and Routines.",
         successCriteria: [
           "All org tasks and routines listed",
@@ -709,6 +720,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-88", title: "Task/Routine List — All", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-88",
+        prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
         prd: "Mobile master list of all tasks and routines. Same data as desktop but in a card-based scrollable list. Filter sheet accessible via filter icon. Search bar at top. Tap card to open detail. Pull-to-refresh. Tab toggle between Tasks and Routines.",
         successCriteria: [
           "All org tasks and routines in card list",
@@ -720,6 +732,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-91", title: "Task/Routine List — Assigned", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-91",
+        prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
         prd: "Filtered view showing only tasks and routines assigned to the logged-in user on desktop/iPad. Same layout and interaction as the All list but pre-filtered to current user. Grouped by: Today, Upcoming, Overdue, Flexible (no date). Quick status change available inline without opening detail. This is the PM's 'My Work' view.",
         successCriteria: [
           "Only current user's assigned tasks and routines shown",
@@ -731,6 +744,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-92", title: "Task/Routine List — Assigned", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-92",
+        prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
         prd: "Mobile view of tasks and routines assigned to the current user. Card-based list grouped by Today, Upcoming, Overdue, Flexible. Swipe actions for quick status change. This is the primary view for PM mobile app — their daily work queue.",
         successCriteria: [
           "Only current user's assignments shown",
@@ -742,6 +756,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-93", title: "Task/Routine List — Historical", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-93",
+        prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
         prd: "Historical archive of completed and cancelled tasks and routines on desktop/iPad. Read-only list for auditing and reference. Filterable by: property, assignee, date range, type (task/routine), completion status (completed/cancelled). Sortable by completion date. Click to view full detail including field notes, photos, and activity log. Exportable for reporting. This is the 'what happened' view for accountability and service history.",
         successCriteria: [
           "Only completed and cancelled items shown",
@@ -780,6 +795,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-155", title: "Routine Card", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-155",
+        prototypeUrl: `${PROTO_BASE}/proto/review-queue`,
         prd: "Routine instance detail card on desktop/iPad. Shows a single scheduled instance of a routine. Opens as slide panel over calendar. Header: routine name, property, assignee, scheduled date, status (Pending/In Progress/Completed). Checklist section: each action shown as a row with pass/fail toggle, photo capture slot, notes field, and flag button. Assignee executes action-by-action: taps pass or fail, captures photo if required, adds notes. Flagging an action marks it for PM review with a reason. Issue detection: if an action is failed, Cassi suggests creating a follow-up task. Completion requires all actions to have a pass/fail result. Summary section shows: total pass/fail counts, flagged items, time spent, and option to generate report (see UX-292).",
         successCriteria: [
           "Routine instance header: name, property, assignee, date, status",
@@ -794,6 +810,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-160", title: "Routine Card", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-160",
+        prototypeUrl: `${PROTO_BASE}/proto/review-queue`,
         prd: "Mobile routine execution card — the primary field tech view for completing routines. Full-screen, action-by-action flow. Each action shown one at a time (or as a scrollable checklist). Pass/fail buttons large and thumb-friendly. Camera opens directly for photo capture. Notes via keyboard or voice. Flag button with reason picker. Progress indicator showing completed/total actions. Cannot skip actions — must pass or fail each. On completion, summary screen with option to flag the whole routine for PM review.",
         successCriteria: [
           "Action-by-action execution with large pass/fail buttons",
@@ -959,6 +976,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-261", title: "Vendor List", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-261",
+        prototypeUrl: `${PROTO_BASE}/proto/vendor-module`,
         prd: "Vendor list view on desktop/iPad. Opens as a canvas overlay from nav. Shows all vendors in the organization. Each vendor card: company name, category (HVAC, Plumbing, Electrical, Landscaping, etc.), primary contact name, phone, status (Active/Inactive), assigned properties count, and active task count. Search by name or category. Filter by: status, category, assigned property. Sort by name, category, or last activity. Click vendor to open vendor profile. Add Vendor button triggers creation flow.",
         successCriteria: [
           "All vendors listed with: name, category, contact, status, property count, task count",
@@ -972,6 +990,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-265", title: "Vendor List", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-265",
+        prototypeUrl: `${PROTO_BASE}/proto/vendor-module`,
         prd: "Mobile vendor list. Card-based list with vendor name, category, status badge, and primary contact. Search and filter by category/status. Tap vendor to open profile. Tap phone number to call directly. Pull-to-refresh. Add Vendor action accessible.",
         successCriteria: [
           "All vendors in card list with name, category, status, contact",
@@ -984,6 +1003,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-269", title: "Vendor Profile", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-269",
+        prototypeUrl: `${PROTO_BASE}/proto/vendor-module`,
         prd: "Vendor profile on desktop/iPad. Sections: Overview (company name, category, primary contact, phone, email, preferred communication channel — email/SMS/phone), Notes (running log of vendor-related notes), Task History (all tasks assigned to this vendor with status and dates), Properties (properties this vendor is associated with), Outbound Notifications (log of messages sent to this vendor via Cassi — see below). Task-driven outbound notifications: when a task is assigned to a vendor, Cassi generates a notification message (work order summary) that PM reviews and taps 'Send' to deliver via the vendor's preferred channel. PM can edit the message before sending. Notification log shows: message, channel, sent timestamp, and delivery/response status. Admin can edit all vendor fields. Admin can deactivate vendor (preserves history).",
         successCriteria: [
           "Overview: name, category, contact info, preferred communication channel",
@@ -998,6 +1018,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-274", title: "Vendor Profile", platform: "Mobile Admin", status: "Todo", url: "https://linear.app/cassi/issue/UX-274",
+        prototypeUrl: `${PROTO_BASE}/proto/vendor-module`,
         prd: "Mobile vendor profile for Admin. Same sections as desktop in vertical scroll. Admin has full edit access. Contact actions prominent: tap-to-call, tap-to-text, tap-to-email. Task-driven outbound notifications: Admin reviews Cassi-generated message and taps Send. Notification log scrollable. Admin can edit vendor fields and deactivate.",
         successCriteria: [
           "All profile sections in vertical scroll",
@@ -1009,6 +1030,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-279", title: "Vendor Profile", platform: "Mobile PM", status: "Todo", url: "https://linear.app/cassi/issue/UX-279",
+        prototypeUrl: `${PROTO_BASE}/proto/vendor-module`,
         prd: "Mobile vendor profile for PM role. Read-only view of vendor details — PM can see contact info, notes, task history, and properties but cannot edit vendor-level fields. Contact actions available: tap-to-call, tap-to-text. PM can view outbound notification log but cannot send notifications (Admin only). Useful for field reference — PM knows who the vendor is and how to reach them.",
         successCriteria: [
           "Vendor details viewable: name, category, contact, notes, task history",
@@ -1020,6 +1042,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-283", title: "Add a Vendor", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-283",
+        prototypeUrl: `${PROTO_BASE}/proto/vendor-module`,
         prd: "Add vendor flow on desktop/iPad. Fields: company name (required), category (required — HVAC, Plumbing, Electrical, Landscaping, General, Custom), primary contact name, phone, email, preferred communication channel (email/SMS/phone), notes, assigned properties (multi-select from property list). Vendor is Active on creation. Duplicate detection: warns if a vendor with the same name or phone already exists. Save adds vendor to the vendor list and makes them available for task assignment.",
         successCriteria: [
           "Required fields: company name, category",
@@ -1033,6 +1056,7 @@ export const PROJECTS: Project[] = [
         ],
       },
       { id: "UX-288", title: "Add a Vendor", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-288",
+        prototypeUrl: `${PROTO_BASE}/proto/vendor-module`,
         prd: "Mobile add vendor flow. Same fields as desktop optimized for mobile input. Quick-add: company name + category + phone is the minimum to create. Full details can be added later from the vendor profile. Contact import from phone contacts as a shortcut. Save creates Active vendor immediately.",
         successCriteria: [
           "Quick-add: company name + category + phone minimum",

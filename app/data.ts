@@ -11,6 +11,20 @@ export interface SubIssue {
   children?: { id: string; title: string; label: string }[]; // page states / features
 }
 
+export interface CustomerQuote {
+  text: string;
+  source: string;      // "Neversweat Apr 15" etc.
+  person?: string;     // "Michael", "Karli", etc.
+}
+
+export interface ProjectContext {
+  problem: string;              // What's broken today
+  hypothesis: string;           // What we believe will fix it
+  evidence: CustomerQuote[];    // Direct quotes from pilot research
+  successSignal: string;        // How we know it worked
+  researchFlags?: string[];     // Tensions or open questions from research
+}
+
 export interface Project {
   id: number;
   name: string;
@@ -20,6 +34,7 @@ export interface Project {
   targetDate: string | null;  // "Apr 22" etc.
   color: string;
   prototypeUrl?: string;      // link to interactive prototype on Vercel
+  context: ProjectContext;     // the WHY
   issues: SubIssue[];
 }
 
@@ -35,6 +50,16 @@ export const PROJECTS: Project[] = [
     status: "Planned",
     targetDate: "Apr 22",
     color: "#bec2c8",
+    context: {
+      problem: "Too many clicks to get anywhere. The beta had deep nesting; the prototype improved this but customers still report friction reaching key views. Calendar buried, tasks require multiple navigations.",
+      hypothesis: "A flat navigation with calendar as home and everything else one tap away will match how PMs actually think — schedule first, then drill into specifics.",
+      evidence: [
+        { text: "Too many clicks to reach the calendar view.", source: "Wellen + Neversweat", person: "Karli / Michael" },
+        { text: "I love how simple this is… I could learn this in a couple hours.", source: "Old World", person: "Patrick" },
+        { text: "Fewer clicks = better.", source: "Neversweat", person: "Michael" },
+      ],
+      successSignal: "PM can reach any core view (calendar, tasks, routines, properties, vendors) in 1 tap from any screen.",
+    },
     issues: [
       { id: "UX-321", title: "Navigation", platform: "Desktop / iPad", status: "Backlog", url: "https://linear.app/cassi/issue/UX-321" },
       { id: "UX-322", title: "Navigation", platform: "Mobile", status: "Backlog", url: "https://linear.app/cassi/issue/UX-322" },
@@ -52,6 +77,21 @@ export const PROJECTS: Project[] = [
     targetDate: "Apr 22",
     color: "#eb5757",
     prototypeUrl: `${PROTO_BASE}`,
+    context: {
+      problem: "PMs juggle schedules across properties, team, and vendors using memory, texts, and disconnected calendars. No single view shows what's happening across the portfolio. Events (contractor meetings) and reminders (flexible to-dos) have no home.",
+      hypothesis: "Calendar as the primary interface — not a feature inside the app, but THE app — gives PMs the at-a-glance control they need. Events and reminders fill the gap between hard-scheduled tasks and things that need tracking but aren't work items.",
+      evidence: [
+        { text: "I loved that calendar. I thought it was great.", source: "Neversweat Apr 13", person: "Michael" },
+        { text: "If someone calls for something crazy that has to be done in the next three days, where can we put it in? Right now I either say yes and I don't know if we can, or I say I'll get back to you, go to the computer, look at the big calendar.", source: "Neversweat Apr 15", person: "Michael" },
+        { text: "I could just fly through these easily.", source: "Old World", person: "Patrick" },
+        { text: "We just run in circles all day long basically.", source: "Wellen Apr 14", person: "Karli" },
+      ],
+      successSignal: "PM opens the app and immediately knows what's happening today across all properties, team, and vendors — without clicking into anything.",
+      researchFlags: [
+        "Divergent default view preferences — Old World/Wellen want calendar; Neversweat wants punch list first. Default should be configurable per company.",
+        "Offline calendar access — Old World has properties with no connectivity. Architecture decision required before mobile scope is finalized.",
+      ],
+    },
     issues: [
       { id: "UX-208", title: "Schedule", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-208" },
       { id: "UX-218", title: "Schedule", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-218" },
@@ -82,6 +122,21 @@ export const PROJECTS: Project[] = [
     status: "Planned",
     targetDate: "Apr 27",
     color: "#5e6ad2",
+    context: {
+      problem: "Service history per property is critical and currently missing. PMs rely on memory and texts. Different techs visit the same property and don't share notes. Access codes, vendor contacts, and asset info live in disconnected systems (Ignite, notebooks, text threads).",
+      hypothesis: "A property profile with structured knowledge base (assets, documents, photos, notes, access info) eliminates the tribal knowledge problem. AI-powered onboarding from uploaded documents means PMs don't re-enter what they already have.",
+      evidence: [
+        { text: "If we could be like: Jack was on site and fixed this, this, and this, and these were his notes — we can compare.", source: "Wellen Apr 14", person: "Karli" },
+        { text: "I would want to get as much information up front so I can set up services because if I'm going to set up their HVAC service, they're going to ask, 'Well, what equipment do they have?'", source: "Wellen Apr 14", person: "Karli" },
+        { text: "My guys should not be calling me and saying, 'Who's the vendor at this property?' You should just see it and you should just call them.", source: "Wellen Apr 14", person: "Karli" },
+      ],
+      successSignal: "A tech arrives at a property and has everything they need (access codes, asset history, vendor contacts, prior notes) without calling the PM.",
+      researchFlags: [
+        "Assets tab deferred from v1 — but Wellen's HVAC story and Neversweat's asset tracking needs are real. A lightweight asset reference within the task model may need to ship even if full asset management is post-v1.",
+        "Bulk property creation deferred — TMS (80 properties) and Neversweat (50–60) cannot onboard at scale without it.",
+        "20-property hard cap bug — Neversweat: adding a 21st causes the last to disappear. Blocking adoption.",
+      ],
+    },
     issues: [
       { id: "UX-34", title: "Property Onboarding — Documentation", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-34",
         children: [
@@ -135,6 +190,20 @@ export const PROJECTS: Project[] = [
     status: "Planned",
     targetDate: "Apr 30",
     color: "#26B5CE",
+    context: {
+      problem: "AI features feel like 'smoke and mirrors' when they show noise instead of actionable signal. PMs want AI that saves them time on real decisions — not a chatbot that summarizes what they already know.",
+      hypothesis: "Cassi earns trust by being useful in context: suggesting tasks when you're at a property with downtime, flagging maintenance revenue you're missing, pre-filling work orders from conversation. Intelligence embedded in workflows, not a separate chat screen.",
+      evidence: [
+        { text: "If you have extra time here are some things that can be done there that aren't scheduled that have to be done now between now and the next three months… kind of a suggestion almost.", source: "Neversweat Apr 15", person: "Michael" },
+        { text: "We are losing out for one maintenance of the house revenue and just overall organization.", source: "Wellen Apr 14", person: "Karli" },
+        { text: "AI insights panel showing noise rather than actionable signal — 'smoke and mirrors' undermines trust in AI layer.", source: "Old World Apr 15", person: "Patrick" },
+      ],
+      successSignal: "PM acts on a Cassi suggestion at least once per day without being prompted to open a chat.",
+      researchFlags: [
+        "AI opportunistic task suggestions confirmed x2 (Neversweat + Wellen independently) — location-aware task suggestions on property arrival is a natural early AI feature.",
+        "JC Contracting asked for form-fill alongside AI chat, not to replace it.",
+      ],
+    },
     issues: [
       { id: "UX-299", title: "Task/Routine Creation Insights", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-299" },
       { id: "UX-301", title: "Task/Routine Creation Insights", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-301" },
@@ -163,6 +232,22 @@ export const PROJECTS: Project[] = [
     targetDate: "May 5",
     color: "#f7c8c1",
     prototypeUrl: `${PROTO_BASE}/proto/task-lifecycle`,
+    context: {
+      problem: "PMs lack structured task lists — they receive verbal or text instructions. No reliable way to schedule and track recurring maintenance. Tasks require a hard date but field work often has no fixed date. No QA/approval step — work gets marked 'done' with no PM review.",
+      hypothesis: "Tasks with a full lifecycle (Open → In Progress → Ready for QA → Completed), configurable rules (photos/notes/invoice required), and flexible scheduling (dated, flexible, recurring) give PMs control without micromanagement. Routines as structured checklists with pass/fail turn tribal knowledge into repeatable processes.",
+      evidence: [
+        { text: "I write down everything in a notebook which is part of the issue that I have.", source: "Neversweat Apr 15", person: "Michael" },
+        { text: "The more stuff you get done, the more you get paid and the more you can take on.", source: "Neversweat Apr 15", person: "Michael" },
+        { text: "Any communication is going to go through it and any task — you're not going to text me one thing — anything is going to go through here.", source: "Wellen Apr 14", person: "Karli" },
+        { text: "Task status can't be reverted — once a status is changed, can't go back to 'Scheduled.'", source: "Neversweat (bug report)" },
+      ],
+      successSignal: "PM can create, assign, and track a task end-to-end without leaving a single flow. Field tech can complete a task and log notes on mobile in under 60 seconds.",
+      researchFlags: [
+        "No subtasks constraint — Neversweat, JC Contracting, and TMS all requested nested task structures. Brief specifies 'only relationship-based task connections.' Must be communicated clearly.",
+        "Tasks require a hard date today — no soft/floating capture mode. This is fixed in the prototype (flexible tasks).",
+        "Inspection module is a competitive differentiator — JC Contracting reviewer holds a NY State Home Inspector license. If built correctly, covers a workflow Procore does poorly and Monday doesn't support.",
+      ],
+    },
     issues: [
       { id: "UX-95", title: "Task Creation", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-95" },
       { id: "UX-106", title: "Task Creation", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-106" },
@@ -189,6 +274,15 @@ export const PROJECTS: Project[] = [
     status: "Planned",
     targetDate: "May 5",
     color: "#4cb782",
+    context: {
+      problem: "PMs need an easy way to create service reports for homeowners but it takes too long manually. Inspection checklists export broken in customer-facing view. No structured report generation from routine results.",
+      hypothesis: "AI-generated reports from routine/inspection results — PM reviews, edits, sends — turns a 30-minute writing task into a 3-minute review. Homeowners get professional reports that build trust and justify service fees.",
+      evidence: [
+        { text: "Inspection checklist — within 2 taps, company-defined checklist, check items off, export PDF to homeowner.", source: "Neversweat Apr 15", person: "Michael" },
+        { text: "Checklist export broken — looked correct internally, broken in customer-facing view.", source: "Neversweat (bug report)" },
+      ],
+      successSignal: "Admin can review, edit, and send a homeowner report in under 3 minutes. AI narrative is usable without editing in 80%+ of cases.",
+    },
     issues: [
       { id: "UX-292", title: "Routine Report", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-292",
         children: [
@@ -215,6 +309,23 @@ export const PROJECTS: Project[] = [
     targetDate: "May 8",
     color: "#4cb782",
     prototypeUrl: `${PROTO_BASE}/proto/vendor-module`,
+    context: {
+      problem: "Vendor coordination is entirely ad hoc — contacts and tasks are not connected. Subcontractors won't use a portal; all communication must go outbound from Cassi. Team dispatch exists in the PM's head. No way to see who's available, overbooked, or off.",
+      hypothesis: "Vendors as first-class entities with task-driven notifications (Cassi sends, PM approves) eliminates manual email/text coordination. Team dispatch with availability constraints prevents overbooking and makes scheduling decisions visible.",
+      evidence: [
+        { text: "It'd be interesting to see where this certain vendor is in terms of all the projects.", source: "Neversweat Apr 15", person: "Michael" },
+        { text: "Some guys who we use a lot, I would make them get onto it.", source: "Neversweat Apr 15", person: "Michael" },
+        { text: "I don't think they have to be associated with the app. I think that could just be like a job where we have to go let them in.", source: "Neversweat Apr 15", person: "Michael" },
+        { text: "Big burly guys who don't like phones won't use a PM app.", source: "Neversweat Apr 15", person: "Michael" },
+        { text: "The software is 'almost useless' without Gmail integration for his use case.", source: "JC Contracting Apr 8", person: "Bayron" },
+      ],
+      successSignal: "Admin never has to manually compose an email or text to a vendor. Vendor outbound status gives at-a-glance visibility into who's been notified and who's confirmed.",
+      researchFlags: [
+        "Vendor access tiers: heavy/recurring = lightweight app user; one-off = job ticket only. V1 covers outbound notification; vendor app access is post-v1.",
+        "Subcontractor communication is a distinct workflow — JC Contracting's entire business runs through subs. The request → work order → confirmation loop happens outside Cassi today. This is a hard adoption blocker.",
+        "Vendor search unreliable in beta — added vendors take a long time to appear, if at all.",
+      ],
+    },
     issues: [
       { id: "UX-240", title: "Team List", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-240" },
       { id: "UX-244", title: "Team List", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-244" },
@@ -241,6 +352,18 @@ export const PROJECTS: Project[] = [
     targetDate: "May 13",
     color: "#bec2c8",
     prototypeUrl: `${PROTO_BASE}/proto/welcome-flow`,
+    context: {
+      problem: "New companies signing up need to see value immediately. Current onboarding asks too much too soon. PMs are busy — they won't fill forms if they don't see the payoff.",
+      hypothesis: "A Cassi-led conversational onboarding (not forms) captures what's needed, builds the first property automatically, and lands the PM on a dashboard that already has structure — not an empty shell.",
+      evidence: [
+        { text: "I could learn this in a couple hours.", source: "Old World", person: "Patrick" },
+      ],
+      successSignal: "New company goes from signup to first property onboarded in under 10 minutes.",
+      researchFlags: [
+        "Company with 1 person (solo PM) — skip team setup step.",
+        "No tickets created yet — needs full breakdown before May 13.",
+      ],
+    },
     issues: [],
   },
 
@@ -253,6 +376,17 @@ export const PROJECTS: Project[] = [
     status: "Backlog",
     targetDate: null,
     color: "#bec2c8",
+    context: {
+      problem: "No permission enforcement — Admin/PM/Field roles defined but not gated. Notification preferences don't exist. Google/Outlook calendar sync is the #1 integration request.",
+      hypothesis: "Settings that work means the PM configures once and forgets. Roles that enforce mean field techs only see what they need. Calendar sync eliminates the 'two calendars' problem.",
+      evidence: [
+        { text: "Google Calendar sync.", source: "Research Synthesis — feature request across multiple customers" },
+      ],
+      successSignal: "Team management works end-to-end — invite, set role, assign to properties. Settings are persistent across sessions.",
+      researchFlags: [
+        "Roles & permissions enforcement deferred to post-v1. V1 has the UI but doesn't enforce at API level.",
+      ],
+    },
     issues: [
       { id: "UX-307", title: "Roles & Permissions", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-307" },
       { id: "UX-314", title: "Roles & Permissions", platform: "Mobile", status: "Todo", url: "https://linear.app/cassi/issue/UX-314" },

@@ -139,9 +139,57 @@ function ProjectCard({ project, expanded, onToggle }: { project: Project; expand
         </div>
       </div>
 
-      {/* Expanded: sub-issues */}
+      {/* Expanded content */}
       {expanded && (
-        <div style={{ borderTop: "1px solid var(--border)", padding: "8px 12px 12px" }}>
+        <div style={{ borderTop: "1px solid var(--border)" }}>
+          {/* Context: the WHY */}
+          <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid var(--border)" }}>
+            {/* Problem + Hypothesis */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+              <div>
+                <span style={{ fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--urgent)", display: "block", marginBottom: "6px" }}>Problem</span>
+                <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.6, margin: 0 }}>{project.context.problem}</p>
+              </div>
+              <div>
+                <span style={{ fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--success)", display: "block", marginBottom: "6px" }}>Hypothesis</span>
+                <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.6, margin: 0 }}>{project.context.hypothesis}</p>
+              </div>
+            </div>
+
+            {/* Customer evidence */}
+            <span style={{ fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--amber)", display: "block", marginBottom: "8px" }}>Customer Evidence</span>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "16px" }}>
+              {project.context.evidence.map((q, i) => (
+                <div key={i} style={{ padding: "10px 14px", background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                  <p style={{ fontSize: "13px", color: "var(--text-1)", margin: 0, lineHeight: 1.5, fontStyle: "italic" }}>&ldquo;{q.text}&rdquo;</p>
+                  <span style={{ fontSize: "10px", fontFamily: "monospace", color: "var(--text-3)", marginTop: "4px", display: "block" }}>
+                    {q.person ? `${q.person} — ` : ""}{q.source}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Success signal */}
+            <div style={{ padding: "10px 14px", background: "rgba(52,199,89,0.04)", border: "1px solid rgba(52,199,89,0.15)", borderRadius: "8px", marginBottom: project.context.researchFlags ? "16px" : "0" }}>
+              <span style={{ fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--success)", display: "block", marginBottom: "4px" }}>Success Signal</span>
+              <p style={{ fontSize: "13px", color: "var(--text-2)", margin: 0, lineHeight: 1.5 }}>{project.context.successSignal}</p>
+            </div>
+
+            {/* Research flags */}
+            {project.context.researchFlags && project.context.researchFlags.length > 0 && (
+              <div>
+                <span style={{ fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--amber)", display: "block", marginBottom: "6px" }}>Research Flags</span>
+                {project.context.researchFlags.map((flag, i) => (
+                  <div key={i} style={{ padding: "8px 12px", background: "rgba(255,149,0,0.04)", border: "1px solid rgba(255,149,0,0.12)", borderRadius: "6px", marginBottom: "4px" }}>
+                    <p style={{ fontSize: "12px", color: "var(--text-2)", margin: 0, lineHeight: 1.5 }}>{flag}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sub-issues */}
+          <div style={{ padding: "8px 12px 12px" }}>
           {project.issues.length === 0 ? (
             <div style={{ padding: "20px", textAlign: "center" }}>
               <span style={{ fontSize: "13px", color: "var(--text-3)" }}>No tickets yet</span>
@@ -164,6 +212,7 @@ function ProjectCard({ project, expanded, onToggle }: { project: Project; expand
               </tbody>
             </table>
           )}
+          </div>
         </div>
       )}
     </div>

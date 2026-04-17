@@ -220,14 +220,14 @@ function ProjectCard({ project, expanded, onToggle }: { project: Project; expand
 }
 
 function IssueRow({ issue }: { issue: SubIssue }) {
-  const [showChildren, setShowChildren] = useState(false);
-  const hasChildren = issue.children && issue.children.length > 0;
+  const [expanded, setExpanded] = useState(false);
+  const hasDetail = issue.prd || (issue.children && issue.children.length > 0);
 
   return (
     <>
       <tr
-        onClick={() => hasChildren && setShowChildren(!showChildren)}
-        style={{ cursor: hasChildren ? "pointer" : "default" }}
+        onClick={() => hasDetail && setExpanded(!expanded)}
+        style={{ cursor: hasDetail ? "pointer" : "default" }}
       >
         <td style={tdStyle}>
           <a
@@ -253,37 +253,63 @@ function IssueRow({ issue }: { issue: SubIssue }) {
           </span>
         </td>
         <td style={tdStyle}>
-          {hasChildren && (
+          {hasDetail && (
             <span style={{
               fontSize: "10px", fontFamily: "monospace", color: "var(--text-3)",
-              transform: showChildren ? "rotate(90deg)" : "rotate(0deg)",
+              transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
               display: "inline-block", transition: "transform 0.12s ease",
             }}>
-              ▸ {issue.children!.length}
+              ▸
             </span>
           )}
         </td>
       </tr>
-      {showChildren && issue.children?.map((child) => (
-        <tr key={child.id}>
-          <td style={{ ...tdStyle, paddingLeft: "28px" }}>
-            <span style={{ fontSize: "10px", fontFamily: "monospace", color: "var(--text-3)" }}>{child.id}</span>
+
+      {/* Expanded: PRD + Success Criteria + Children */}
+      {expanded && (
+        <tr>
+          <td colSpan={5} style={{ padding: "0 10px 12px 40px", borderBottom: "1px solid var(--border)" }}>
+            {/* PRD */}
+            {issue.prd && (
+              <div style={{ marginTop: "8px", marginBottom: "12px" }}>
+                <span style={{ fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-3)", display: "block", marginBottom: "6px" }}>PRD</span>
+                <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.6, margin: 0 }}>{issue.prd}</p>
+              </div>
+            )}
+
+            {/* Success Criteria */}
+            {issue.successCriteria && issue.successCriteria.length > 0 && (
+              <div style={{ marginBottom: "12px" }}>
+                <span style={{ fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--success)", display: "block", marginBottom: "6px" }}>Success Criteria</span>
+                {issue.successCriteria.map((c, i) => (
+                  <div key={i} style={{ display: "flex", gap: "8px", padding: "3px 0" }}>
+                    <span style={{ width: "14px", height: "14px", borderRadius: "3px", border: "1.5px solid var(--border)", flexShrink: 0, marginTop: "1px" }} />
+                    <span style={{ fontSize: "12px", color: "var(--text-2)", lineHeight: 1.5 }}>{c}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Children (page states) */}
+            {issue.children && issue.children.length > 0 && (
+              <div>
+                <span style={{ fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-3)", display: "block", marginBottom: "6px" }}>States</span>
+                <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+                  {issue.children.map((child) => (
+                    <span key={child.id} style={{
+                      padding: "3px 8px", fontSize: "10px", fontFamily: "monospace",
+                      background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)",
+                      borderRadius: "4px", color: "var(--text-3)",
+                    }}>
+                      {child.title}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </td>
-          <td style={tdStyle}>
-            <span style={{ fontSize: "12px", color: "var(--text-2)" }}>{child.title}</span>
-          </td>
-          <td style={tdStyle}>
-            <span style={{
-              fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.05em",
-              padding: "1px 6px", borderRadius: "3px", color: "var(--text-3)", border: "1px solid var(--border)",
-            }}>
-              {child.label}
-            </span>
-          </td>
-          <td style={tdStyle}></td>
-          <td style={tdStyle}></td>
         </tr>
-      ))}
+      )}
     </>
   );
 }

@@ -7,18 +7,46 @@ const STATUS_DOT: Record<string, string> = {
   Backlog: "var(--text-3)",
   Todo: "var(--text-3)",
   "In Progress": "var(--amber)",
+  "In Review": "var(--lilac)",
   Done: "var(--success)",
   Cancelled: "var(--text-3)",
 };
+
+// Pipeline stages for UX team
+const UX_PIPELINE: { key: string; label: string; color: string }[] = [
+  { key: "Backlog", label: "Backlog", color: "var(--text-3)" },
+  { key: "Todo", label: "Todo", color: "var(--text-3)" },
+  { key: "In Progress", label: "In Progress", color: "var(--amber)" },
+  { key: "In Review", label: "Review", color: "var(--lilac)" },
+  { key: "Done", label: "Done", color: "var(--success)" },
+];
+
+function getPipelineCounts(issues: SubIssue[]) {
+  const counts: Record<string, number> = {};
+  for (const stage of UX_PIPELINE) counts[stage.key] = 0;
+  for (const issue of issues) {
+    const status = issue.status;
+    if (status in counts) counts[status]++;
+    else if (status === "Cancelled") { /* skip */ }
+    else counts["Backlog"]++;
+  }
+  return counts;
+}
 
 export default function Home() {
   const [expandedProject, setExpandedProject] = useState<number | null>(2);
   const totalIssues = PROJECTS.reduce((sum, p) => sum + p.issues.length, 0);
 
+  // Global pipeline counts
+  const allIssues = PROJECTS.flatMap((p) => p.issues);
+  const globalCounts = getPipelineCounts(allIssues);
+  const doneCount = globalCounts["Done"];
+  const totalActive = allIssues.filter((i) => i.status !== "Cancelled").length;
+
   return (
     <div style={{ maxWidth: "860px", margin: "0 auto", padding: "48px 24px 100px" }}>
       {/* Header */}
-      <div style={{ marginBottom: "40px" }}>
+      <div style={{ marginBottom: "32px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
           <span style={{ fontSize: "11px", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--amber)", fontFamily: "monospace" }}>CASSI</span>
           <span style={{ fontSize: "11px", color: "var(--text-3)" }}>/</span>
@@ -28,12 +56,37 @@ export default function Home() {
           Build Specs
         </h1>
         <p style={{ fontSize: "14px", color: "var(--text-3)", lineHeight: 1.6, maxWidth: "600px" }}>
-          {PROJECTS.length} projects, {totalIssues} issues, ordered by target date. Each project links to its Linear board, prototype, and sub-issues with states.
+          {PROJECTS.length} projects, {totalIssues} issues, ordered by target date. Click any project to see the why, PRD, success criteria, and progress.
         </p>
       </div>
 
+      {/* Global pipeline */}
+      <div style={{ padding: "16px 20px", border: "1px solid var(--border)", borderRadius: "12px", marginBottom: "12px", background: "var(--surface)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+          <span style={{ fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-3)" }}>UX Pipeline — All Projects</span>
+          <span style={{ fontSize: "12px", fontFamily: "monospace", color: "var(--success)" }}>{doneCount}/{totalActive} done</span>
+        </div>
+        <div style={{ display: "flex", gap: "2px", height: "6px", borderRadius: "3px", overflow: "hidden", marginBottom: "10px" }}>
+          {UX_PIPELINE.map((stage) => {
+            const count = globalCounts[stage.key];
+            if (count === 0) return null;
+            return (
+              <div key={stage.key} style={{ flex: count, background: stage.color, opacity: 0.7 }} title={`${stage.label}: ${count}`} />
+            );
+          })}
+        </div>
+        <div style={{ display: "flex", gap: "16px" }}>
+          {UX_PIPELINE.map((stage) => (
+            <div key={stage.key} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: stage.color }} />
+              <span style={{ fontSize: "10px", fontFamily: "monospace", color: "var(--text-3)" }}>{stage.label} {globalCounts[stage.key]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Timeline bar */}
-      <div style={{ display: "flex", gap: "3px", marginBottom: "32px" }}>
+      <div style={{ display: "flex", gap: "3px", marginBottom: "20px" }}>
         {PROJECTS.map((p) => (
           <div
             key={p.id}
@@ -68,6 +121,10 @@ export default function Home() {
 }
 
 function ProjectCard({ project, expanded, onToggle }: { project: Project; expanded: boolean; onToggle: () => void }) {
+  const counts = getPipelineCounts(project.issues);
+  const total = project.issues.filter((i) => i.status !== "Cancelled").length;
+  const done = counts["Done"];
+
   return (
     <div style={{
       border: `1px solid ${expanded ? "rgba(255,255,255,0.12)" : "var(--border)"}`,
@@ -81,14 +138,23 @@ function ProjectCard({ project, expanded, onToggle }: { project: Project; expand
         {/* Color dot */}
         <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: project.color, flexShrink: 0 }} />
 
-        {/* Name + meta */}
+        {/* Name + meta + pipeline */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <span style={{ fontSize: "15px", fontWeight: 500, color: "var(--text-1)" }}>{project.name}</span>
-            <span style={{ fontSize: "11px", fontFamily: "monospace", color: "var(--text-3)" }}>
-              {project.issues.length} issue{project.issues.length !== 1 ? "s" : ""}
+            <span style={{ fontSize: "11px", fontFamily: "monospace", color: total > 0 ? "var(--success)" : "var(--text-3)" }}>
+              {done}/{total}
             </span>
           </div>
+          {total > 0 && (
+            <div style={{ display: "flex", gap: "1px", height: "3px", borderRadius: "2px", overflow: "hidden", marginTop: "6px", maxWidth: "200px" }}>
+              {UX_PIPELINE.map((stage) => {
+                const c = counts[stage.key];
+                if (c === 0) return null;
+                return <div key={stage.key} style={{ flex: c, background: stage.color, opacity: 0.6 }} />;
+              })}
+            </div>
+          )}
         </div>
 
         {/* Right side */}

@@ -106,7 +106,7 @@ export const PROJECTS: Project[] = [
     status: "Planned",
     targetDate: "Apr 22",
     color: "#eb5757",
-    prototypeUrl: `${PROTO_BASE}`,
+    prototypeUrl: `${PROTO_BASE}/proto/calendar-dispatch`,
     context: {
       problem: "PMs juggle schedules across properties, team, and vendors using memory, texts, and disconnected calendars. No single view shows what's happening across the portfolio. Events (contractor meetings) and reminders (flexible to-dos) have no home.",
       hypothesis: "Calendar as the primary interface — not a feature inside the app, but THE app — gives PMs the at-a-glance control they need. Events and reminders fill the gap between hard-scheduled tasks and things that need tracking but aren't work items.",
@@ -124,7 +124,7 @@ export const PROJECTS: Project[] = [
     },
     issues: [
       { id: "UX-208", title: "Schedule", platform: "Desktop / iPad", status: "Todo", url: "https://linear.app/cassi/issue/UX-208",
-        prototypeUrl: `${PROTO_BASE}`,
+        prototypeUrl: `${PROTO_BASE}/proto/calendar-dispatch`,
         prd: "Calendar as the primary interface. Month, week, and day views showing all tasks, routines, and events across all properties. Color-coded by source: Team (lilac), Vendor (amber), Me (teal), Unassigned (gray). Filtering by source and property. Clicking empty slot opens task creation pre-filled with date/time. Clicking item opens detail slide panel. Overdue items visually distinct. Operational rail alongside calendar shows Cassi suggestions, team status, tasks, and routines in tabs.",
         successCriteria: [
           "Month/week/day views render all tasks, routines, and events",
